@@ -28,3 +28,4 @@ typing_extensions==4.2.0
 tzdata==2022.1
 uvicorn==0.17.6
 yarl==1.7.2
+gunicorn
