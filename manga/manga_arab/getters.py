@@ -5,9 +5,10 @@ from .models import AnimeManga
 from .exceptions import (ConnectionError,NoResults)
 import httpx
 mangapi = MangaArabApi
+session = httpx.AsyncClient()
 class Getter:
     def __init__(self):
-        self.session = httpx.AsyncClient()
+        self.session = session
     async def search(self,search_term:str) ->List[AnimeManga]:
         querystring = {"name":str(search_term).lower(),"API_key":mangapi.API_key}
         response = await self.session.get(

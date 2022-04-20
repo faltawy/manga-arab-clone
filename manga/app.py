@@ -28,8 +28,6 @@ async def search(request:Request,search_term:str = Form(...)):
     return templates.TemplateResponse('search-home.html',context)
 
 
-
-
 @app.get('/manga/{manga_slug}/',name='manga_detail')
 async def manga_detail(request:Request,manga_slug:str):
     result= await getter.get_details(manga_slug)
@@ -50,4 +48,4 @@ async def read_chapter(request:Request,anime_slug:str,chapter_id:int):
 
 @app.on_event('shutdown')
 async def close_session():
-    await getter.session.close()
+    await getter.session.aclose()
