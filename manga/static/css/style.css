@@ -1,0 +1,87 @@
+.search-form{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 5rem;
+}
+.title{
+    font-weight: 600;
+    text-align: center;
+    font-size: 1.5rem;
+    padding: .3rem;
+}
+.search-form .btn{
+    font-weight: 600;
+}
+
+.border-bottom{
+    border-bottom: 2px solid;
+}
+
+.mt-2{
+    margin-top: 2rem;
+}
+
+.text-green{
+    color: rgb(37, 131, 37);
+}
+
+.fs-1{
+    font-size: 1rem;
+}
+
+.fs-2{
+    font-size: 2rem;
+}
+
+.card.translate{
+    transition: 350ms ease transform;
+}
+
+.card.translate:hover{
+    transform: translateY(-10px);
+}
+
+.categories{
+    gap: .5rem;
+    justify-content: space-around;
+}
+
+.categories .cat{
+    background-color: rgb(252, 30, 30);
+    padding: .5rem;
+    font-size: .8rem;
+    color: white;
+    font-weight: 700;
+    
+}
+
+.chapters{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.row{
+    width: 100%;
+}
+.chapters .chapter{
+    font-weight: 600;
+    font-size: 1rem;
+    background-color: coral;
+    color: white;
+    padding: .9rem;
+    border-radius: .8rem;
+    display:flex;
+    align-items: center;
+    gap: .5rem;
+
+}
+
+.chapter .slug{
+    color: red;
+}
+
+

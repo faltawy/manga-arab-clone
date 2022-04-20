@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+{% endblock %}
+{% block content %}
+
+<div class="container flex">
+
+    <h2 class="title">Manga Searcher|Downloader</h2>
+    <form action="{{ url_for('search') }}" method="post" class="search-form">
+        <input type="text" value="{{search_term}}" placeholder="Search for manga..." name="search_term">
+        <button type="submit" class="btn">Search</button>
+    </form>
+
+    {% if results %}
+
+    <div class="row mt-2 container-fluid">
+        <h3 class="center col s12 m12 l12 fs-2">- Results for <span class="text-green">{{search_term}}</span> -</h3>
+        {% for result in results %}
+        <div class="col s6 m4">
+            <div class="card translate">
+                <div class="card-image">
+                    <img loading="lazy" src="{{result.cover}}">
+                    <span class="card-title text-accent-3">{{result.name}}</span>
+                    <a href="{{ url_for('manga_detail',manga_slug=result.slug ) }}"
+                        class="btn-floating halfway-fab waves-effect waves-light red"><i
+                            class="material-icons">arrow_forward</i></a>
+                </div>
+                <div class="card-content">
+                    <p class="">{{result.summary}}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% endif %}
+
+
+
+</div>
+{% endblock %}
