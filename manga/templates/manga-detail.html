@@ -8,7 +8,7 @@
         <div class="col s5">
             <div class="card">
                 <div class="card-image">
-                    <img src="{{manga.cover}}">
+                    <img title="fuck" src="{{manga.cover}}">
                 </div>
             </div>
         </div>
@@ -21,7 +21,7 @@
                     <p>{{manga.summary}}</p>
                 </div>
             </div>
-            <div class="col categories">
+            <div class="col s12 m12 categories">
                 <h5>Categories</h5>
                 {% for cat in manga. categories %}
                 <a class="cat flex flex-row" href="{{ url_for('category-detail',cat_slug=cat.slug) }}">{{cat.name}}</a>
@@ -29,19 +29,35 @@
                 <p>not categorized</p>
                 {% endfor %}
             </div>
-
         </div>
-        <div class="chapters col s12 m12">
-            {% for chapter in manga.chapters|reverse %}
-            <a class="chapter" href="{{ url_for('read_chapter',anime_slug=manga.slug,chapter_id=chapter.slug ) }}">
-
-                <span class="slug">{{chapter.slug}}</span>
-                <span class="name">{{chapter.name}}</span>
-
-            </a>
-            {% endfor %}
-            <a href=""></a>
-        </div>
+        <table>
+            <thead>
+                <th>
+                <td>
+                    <h3 class="center-align">Chapters</h3>
+                </td>
+                </th>
+            </thead>
+            <tbody>
+                {% for chapter in manga.chapters | reverse %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('read_chapter',anime_slug=manga.slug,chapter_id=chapter.slug ) }}">
+                            {{chapter.slug}}
+                        </a>
+                    </td>
+                    <td><a href="{{ url_for('read_chapter',anime_slug=manga.slug,chapter_id=chapter.slug ) }}">
+                            {% if chapter.name %}
+                            {{chapter.name}}
+                            {% else %}
+                            chapter {{chapter.slug}}
+                            {% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

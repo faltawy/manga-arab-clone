@@ -1,26 +1,44 @@
-from fastapi import FastAPI,Request,Form
+from __future__ import annotations
+
+from typing import Final
+
+from fastapi import Depends, FastAPI, Form, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import pathlib
-from .manga_arab.getters import Getter
-from .manga_arab.exceptions import NoResults
+from httpx import AsyncClient
 
-BASE_DIR = pathlib.Path(__file__).parent
+from .cfg import BASE_DIR
+from .manga_arab.exceptions import NoResults
+from .manga_arab.getters import Getter
+
 DEBUG = False
-app = FastAPI(DEBUG=DEBUG)
+app:Final = FastAPI(DEBUG=DEBUG)
 
 app.mount("/static", StaticFiles(directory=BASE_DIR.joinpath('static')), name="static")
 templates = Jinja2Templates(directory=BASE_DIR.joinpath("templates"))
 
-getter = Getter()
+
+@app.on_event('startup')
+def startup():
+    setattr(app.state,'session',AsyncClient())
+
+@app.on_event('shutdown')
+async def shutdown():
+   await app.state.session.aclose()
+
+
+def session_dep(request:Request)->AsyncClient:
+    return request.app.state.session
+
 
 @app.get('/',name='home')
 async def home(request: Request):
     return templates.TemplateResponse('search-home.html',{'request':request})
 
 @app.post('/search',name='search')
-async def search(request:Request,search_term:str = Form(...)):
+async def search(request:Request,session:AsyncClient = Depends(session_dep),search_term:str = Form(...)):
     try:
+        getter = Getter(session)
         results = await getter.search(search_term)
         context = {'request':request,'search_term':search_term,'results':results}
     except NoResults:
@@ -29,7 +47,8 @@ async def search(request:Request,search_term:str = Form(...)):
 
 
 @app.get('/manga/{manga_slug}/',name='manga_detail')
-async def manga_detail(request:Request,manga_slug:str):
+async def manga_detail(request:Request,manga_slug:str,session:AsyncClient = Depends(session_dep)):
+    getter = Getter(session)  # type: ignore
     result= await getter.get_details(manga_slug)
     context = {'request':request,'manga':result}
     return templates.TemplateResponse('manga-detail.html',context)
@@ -40,12 +59,9 @@ def category_detail(request:Request,cat_slug:str):
 
 
 @app.get('/anime/{anime_slug}/{chapter_id}/',name='read_chapter')
-async def read_chapter(request:Request,anime_slug:str,chapter_id:int):
+async def read_chapter(request:Request,anime_slug:str,chapter_id:int,session:AsyncClient = Depends(session_dep)):
+    getter = Getter(session)  # type: ignore
     imgs = await getter.read_chapter(anime_slug,chapter_id)
+    print(imgs)
     context = {'request':request,'imgs':imgs}
     return templates.TemplateResponse('read-chapter.html',context)
-
-
-@app.on_event('shutdown')
-async def close_session():
-    await getter.session.aclose()

@@ -59,6 +59,7 @@
 
 .chapters{
     display: flex;
+    flex-direction: row-reverse;
     align-items: center;
     gap: .5rem;
     flex-wrap: wrap;
@@ -85,3 +86,9 @@
 }
 
 
+
+.author{
+    padding: .8rem;
+    font-weight: 600;
+    background-color:chocolate;
+}

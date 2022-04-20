@@ -22,7 +22,10 @@ class Category(BaseModel):
     id: int
     name: str
     slug: str
-
+    
+    @property
+    def index(self):
+        return int(self.slug)
 
 class Status(BaseModel):
     id: int
@@ -46,10 +49,7 @@ class AnimeManga(BaseModel):
     type: Optional[Status]
     categories: List[Category]
     chapters:Optional[List[Chapter]]
-
-
-
-
+    
 class Category(BaseModel):
     id: int
     name: str

@@ -1,19 +1,18 @@
-from aiohttp import ClientResponse, ClientSession
 from .utils import MangaArabApi
 from typing import List
 from .models import AnimeManga
 from .exceptions import (ConnectionError,NoResults)
-import httpx
 mangapi = MangaArabApi
-session = httpx.AsyncClient()
+from aiohttp import ClientSession
 class Getter:
-    def __init__(self):
+    def __init__(self,session:ClientSession):
         self.session = session
+    
     async def search(self,search_term:str) ->List[AnimeManga]:
         querystring = {"name":str(search_term).lower(),"API_key":mangapi.API_key}
-        response = await self.session.get(
-            mangapi.get_endpoint('search')
-            ,params=querystring)
+
+        response =await self.session.get(mangapi.get_endpoint('search'),params=querystring)
+
         if not response.is_success:
             raise ConnectionError
         else:
@@ -28,7 +27,7 @@ class Getter:
         url = mangapi.get_endpoint('manga-info')%(anime_slug)
         querystring = {"API_key":mangapi.API_key}
         resp= await self.session.get(url,params=querystring)
-        _details = await resp.json()
+        _details = resp.json()
         try:
             details = _details.get('data').get('infoManga')[0]
             return AnimeManga(**details)
@@ -36,13 +35,12 @@ class Getter:
             print(e)
             raise NoResults(anime_slug)
 
-
     async def read_chapter(self,anime_slug:str,chapter:int):
         querystring = {"API_key":mangapi.API_key}
         url = mangapi.get_endpoint('read-chapter')%(anime_slug,str(chapter))
         try:
             response = await self.session.get(url,params=querystring)
-            chapter_data =await response.json()
+            chapter_data =response.json()
             return chapter_data.get('pages_url')
         except:
             NoResults(anime_slug + str(chapter))
