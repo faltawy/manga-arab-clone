@@ -1,4 +1,4 @@
-aiohttp
+httpx
 fastapi
 Jinja2
 python-multipart

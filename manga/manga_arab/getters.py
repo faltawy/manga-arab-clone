@@ -3,23 +3,20 @@ from .utils import MangaArabApi
 from typing import List
 from .models import AnimeManga
 from .exceptions import (ConnectionError,NoResults)
-import asyncio
+import httpx
 mangapi = MangaArabApi
 class Getter:
     def __init__(self):
-        self.session = ClientSession()
+        self.session = httpx.AsyncClient()
     async def search(self,search_term:str) ->List[AnimeManga]:
         querystring = {"name":str(search_term).lower(),"API_key":mangapi.API_key}
-        response = self.session.get(
+        response = await self.session.get(
             mangapi.get_endpoint('search')
             ,params=querystring)
-        
-        task = asyncio.create_task(response)
-        response = asyncio.run(task)
-        if not response.ok:
+        if not response.is_success:
             raise ConnectionError
         else:
-            resp_data = await response.json()
+            resp_data =response.json()
             if len(resp_data['data']) == 0:
                 raise NoResults(search_term)
             else:
@@ -29,8 +26,8 @@ class Getter:
     async def get_details(self,anime_slug:str)->AnimeManga:
         url = mangapi.get_endpoint('manga-info')%(anime_slug)
         querystring = {"API_key":mangapi.API_key}
-        async with self.session.get(url,params=querystring) as resp:
-            _details = await resp.json()
+        resp= await self.session.get(url,params=querystring)
+        _details = await resp.json()
         try:
             details = _details.get('data').get('infoManga')[0]
             return AnimeManga(**details)
@@ -43,8 +40,8 @@ class Getter:
         querystring = {"API_key":mangapi.API_key}
         url = mangapi.get_endpoint('read-chapter')%(anime_slug,str(chapter))
         try:
-            async with self.session.get(url,params=querystring) as response:
-                chapter_data =await response.json()
+            response = await self.session.get(url,params=querystring)
+            chapter_data =await response.json()
             return chapter_data.get('pages_url')
         except:
             NoResults(anime_slug + str(chapter))
