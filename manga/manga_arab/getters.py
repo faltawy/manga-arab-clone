@@ -3,19 +3,19 @@ from .utils import MangaArabApi
 from typing import List
 from .models import AnimeManga
 from .exceptions import (ConnectionError,NoResults)
-
+import asyncio
 mangapi = MangaArabApi
 class Getter:
     def __init__(self):
         self.session = ClientSession()
     async def search(self,search_term:str) ->List[AnimeManga]:
         querystring = {"name":str(search_term).lower(),"API_key":mangapi.API_key}
-        
-        async with self.session.get(
+        response = self.session.get(
             mangapi.get_endpoint('search')
-            ,params=querystring) as response:
-            response = response
+            ,params=querystring)
         
+        task = asyncio.create_task(response)
+        response = asyncio.run(task)
         if not response.ok:
             raise ConnectionError
         else:
