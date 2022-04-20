@@ -6,10 +6,9 @@ from fastapi import Depends, FastAPI, Form, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from httpx import AsyncClient
-
+from manga_arab.getters import (search,read_chapter,get_details)
 from .cfg import BASE_DIR
 from .manga_arab.exceptions import NoResults
-from .manga_arab.getters import Getter
 
 DEBUG = False
 app:Final = FastAPI(DEBUG=DEBUG)
@@ -36,10 +35,9 @@ async def home(request: Request):
     return templates.TemplateResponse('search-home.html',{'request':request})
 
 @app.post('/search',name='search')
-async def search(request:Request,session:AsyncClient = Depends(session_dep),search_term:str = Form(...)):
+async def search_view(request:Request,session:AsyncClient = Depends(session_dep),search_term:str = Form(...)):
     try:
-        getter = Getter(session)
-        results = await getter.search(search_term)
+        results = await search(session,search_term)
         context = {'request':request,'search_term':search_term,'results':results}
     except NoResults:
         context = {'request':request,'search_term':search_term}
@@ -48,8 +46,7 @@ async def search(request:Request,session:AsyncClient = Depends(session_dep),sear
 
 @app.get('/manga/{manga_slug}/',name='manga_detail')
 async def manga_detail(request:Request,manga_slug:str,session:AsyncClient = Depends(session_dep)):
-    getter = Getter(session)  # type: ignore
-    result= await getter.get_details(manga_slug)
+    result= await get_details(session,manga_slug)
     context = {'request':request,'manga':result}
     return templates.TemplateResponse('manga-detail.html',context)
 
@@ -59,9 +56,8 @@ def category_detail(request:Request,cat_slug:str):
 
 
 @app.get('/anime/{anime_slug}/{chapter_id}/',name='read_chapter')
-async def read_chapter(request:Request,anime_slug:str,chapter_id:int,session:AsyncClient = Depends(session_dep)):
-    getter = Getter(session)  # type: ignore
-    imgs = await getter.read_chapter(anime_slug,chapter_id)
+async def read_chapter_view(request:Request,anime_slug:str,chapter_id:int,session:AsyncClient = Depends(session_dep)):
+    imgs = await read_chapter(session,anime_slug,chapter_id)
     print(imgs)
     context = {'request':request,'imgs':imgs}
     return templates.TemplateResponse('read-chapter.html',context)
