@@ -6,7 +6,9 @@ from fastapi import Depends, FastAPI, Form, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from httpx import AsyncClient
-from manga_arab.getters import (search,read_chapter,get_details)
+
+from .manga_arab.getters import (get_details, read_chapter, search)
+
 from .cfg import BASE_DIR
 from .manga_arab.exceptions import NoResults
 
