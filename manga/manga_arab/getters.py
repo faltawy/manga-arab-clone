@@ -10,7 +10,12 @@ class Getter:
         self.session = ClientSession()
     async def search(self,search_term:str) ->List[AnimeManga]:
         querystring = {"name":str(search_term).lower(),"API_key":mangapi.API_key}
-        response = await self.session.get(mangapi.get_endpoint('search'),params=querystring)
+        
+        async with self.session.get(
+            mangapi.get_endpoint('search')
+            ,params=querystring) as response:
+            response = response
+        
         if not response.ok:
             raise ConnectionError
         else:

@@ -49,7 +49,6 @@ async def read_chapter(request:Request,anime_slug:str,chapter_id:int):
     return templates.TemplateResponse('read-chapter.html',context)
 
 
-
 @app.on_event('shutdown')
 async def close_session():
     await getter.session.close()
