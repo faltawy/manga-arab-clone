@@ -7,11 +7,12 @@ from .manga_arab.getters import Getter
 from .manga_arab.exceptions import NoResults
 
 BASE_DIR = pathlib.Path(__file__).parent
-DEBUG = True
+DEBUG = False
 app = FastAPI(DEBUG=DEBUG)
 
 app.mount("/static", StaticFiles(directory=BASE_DIR.joinpath('static')), name="static")
 templates = Jinja2Templates(directory=BASE_DIR.joinpath("templates"))
+
 getter = Getter()
 
 @app.get('/',name='home')
@@ -33,7 +34,6 @@ async def search(request:Request,search_term:str = Form(...)):
 @app.get('/manga/{manga_slug}/',name='manga_detail')
 async def manga_detail(request:Request,manga_slug:str):
     result= await getter.get_details(manga_slug)
-    print(result)
     context = {'request':request,'manga':result}
     return templates.TemplateResponse('manga-detail.html',context)
 
@@ -48,3 +48,8 @@ async def read_chapter(request:Request,anime_slug:str,chapter_id:int):
     context = {'request':request,'imgs':imgs}
     return templates.TemplateResponse('read-chapter.html',context)
 
+
+
+@app.on_event('shutdown')
+async def close_session():
+    await getter.session.close()
