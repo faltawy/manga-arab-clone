@@ -3,20 +3,19 @@ from typing import List
 from .models import AnimeManga
 from .exceptions import (ConnectionError,NoResults)
 mangapi = MangaArabApi
-from aiohttp import ClientSession
+from httpx import AsyncClient
+
 class Getter:
-    def __init__(self,session:ClientSession):
+    def __init__(self,session:AsyncClient):
         self.session = session
-    
     async def search(self,search_term:str) ->List[AnimeManga]:
         querystring = {"name":str(search_term).lower(),"API_key":mangapi.API_key}
-
         response =await self.session.get(mangapi.get_endpoint('search'),params=querystring)
 
         if not response.is_success:
             raise ConnectionError
         else:
-            resp_data =response.json()
+            resp_data = response.json()
             if len(resp_data['data']) == 0:
                 raise NoResults(search_term)
             else:
