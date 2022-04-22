@@ -1,5 +1,4 @@
-from datetime import datetime
-from lib2to3.pgen2.token import BACKQUOTE
+from decimal import Decimal
 from typing import List,Optional
 from pydantic import BaseModel
 
@@ -10,7 +9,7 @@ class Artist(BaseModel):
 
 
 class Chapter(BaseModel):
-    id: int
+    id: Decimal
     slug: str
     name: str
     number: str
@@ -42,15 +41,11 @@ class AnimeManga(BaseModel):
     cover: str
     caution: int
     views: int
-    type_id: int = None
+    type_id: int = None  # type: ignore
     authors: List[Artist]
     artists:Optional[List[Artist]] 
     status: Optional[Status]
     type: Optional[Status]
     categories: List[Category]
     chapters:Optional[List[Chapter]]
-    
-class Category(BaseModel):
-    id: int
-    name: str
-    slug: str
+
