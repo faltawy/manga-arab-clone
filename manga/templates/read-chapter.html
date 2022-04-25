@@ -10,22 +10,42 @@
     }
 
     .img-viewer {
-        margin: 0 auto;
+        margin: 1rem auto;
+        padding: .5rem;
     }
 
     .responsive-img {
         padding: auto;
         border: 1px solid;
     }
+
+    .image {
+        position: relative;
+    }
+
+    .image::after {
+        content: attr(data-img-index);
+        background-color: black;
+        position: absolute;
+        bottom: 0;
+        left: .5rem;
+        padding: 1.2rem;
+        color: white;
+        font-size: .8rem;
+        font-weight: 700;
+        border-radius: 50%;
+    }
 </style>
 
 <div class="container-fluid">
     <figure class="img-viewer">
+        {% if imgs %}
         {% for img in imgs %}
         <div class="image">
-            <img alt="img1" class="responsive-img" loading="lazy" src="{{img}}" />
+            <img alt="img1" class="responsive-img" data-img-index="{{loop.index}}" loading="lazy" src="{{img}}" />
         </div>
         {% endfor %}
+        {% endif %}
     </figure>
 </div>
 {% endblock %}
