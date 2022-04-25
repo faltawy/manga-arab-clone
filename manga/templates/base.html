@@ -7,17 +7,27 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{{ url_for('static', path='css\materialize.min.css' ) }}">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
         {% block styles %}{% endblock styles %}
         <title>{% if title %}{{title}}{% else %}Manga Searcher | Downloader{% endif %}</title>
     </head>
 
     <body>
         <header>
-            <nav></nav>
+            <nav class="flex-center"><a href="{{ url_for('homeView' ) }}">Manga Reader</a></nav>
         </header>
         {% block content %}
 
         {% endblock %}
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-12VKT5ZYF7"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'G-12VKT5ZYF7');
+        </script>
     </body>
     <script src="{{ url_for('static', path='js\materialize.min.js' ) }}"></script>
 
