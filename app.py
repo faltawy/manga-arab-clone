@@ -1,3 +1,3 @@
-from manga.app import app
+from manga.main import app
 
 
