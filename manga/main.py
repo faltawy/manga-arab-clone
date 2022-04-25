@@ -11,7 +11,7 @@ from .cfg import BASE_DIR
 from .manga_arab.exceptions import NoResults
 from .manga_arab.getters import get_details, read_chapter, search
 
-DEBUG = True
+DEBUG = False
 app:Final = FastAPI(DEBUG=DEBUG,docs_url=None)
 
 app.mount("/static", StaticFiles(directory=BASE_DIR.joinpath('static')), name="static")
